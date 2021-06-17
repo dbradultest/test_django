@@ -1,7 +1,8 @@
 import datetime
 
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, DateInput
+from django.forms import ModelForm, DateInput, IntegerField
+
 
 from students.models import Student
 
@@ -12,10 +13,12 @@ class StudentBaseForm(ModelForm):
         fields = [
             'first_name',
             'last_name',
-            'age',
+            # 'age',
             'birthdate',
+            'email',
             'enroll_date',
             'graduate_date',
+            'phone_number',
         ]
         # fields = '__all__'
         widgets = {'birthdate': DateInput(attrs={'type': 'date'})}
@@ -54,13 +57,20 @@ class StudentCreateForm(StudentBaseForm):
 
 
 class StudentUpdateForm(StudentBaseForm):
+    age = IntegerField()
+
     class Meta(StudentBaseForm.Meta):
         fields = [
             'first_name',
             'last_name',
-            # 'age',
             'birthdate',
+            # 'age',
             'enroll_date',
             'graduate_date',
-            'graduate_date2',
+            'phone_number',
         ]
+
+    def __init__(self, *args, **kwargs):
+        self.base_fields['age'].initial = kwargs.get('instance').age()
+        self.base_fields['age'].widget.attrs['readonly'] = True
+        super().__init__(*args, **kwargs)

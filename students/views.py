@@ -31,12 +31,8 @@ from webargs import fields
 
 @use_args(
     {
-        "first_name": fields.Str(
-            required=False
-        ),
-        "last_name": fields.Str(
-            required=False
-        ),
+        "first_name": fields.Str(required=False),
+        "last_name": fields.Str(required=False),
         "birthdate": fields.Date(required=False),
     },
     location="query",
@@ -86,16 +82,7 @@ def create_student(request):
             form.save()
             return HttpResponseRedirect('/students/')
 
-    html_form = f"""
-    <form method="post">
-      {form.as_p()}
-      <input type="submit" value="Create">
-    </form>
-    """
-
-    response = html_form
-
-    return HttpResponse(response)
+    return render(request, 'students/create.html', {'form': form})
 
 
 @csrf_exempt
@@ -125,3 +112,7 @@ def update_student(request, id):
     response = html_form
 
     return HttpResponse(response)
+
+
+def index(request):
+    return HttpResponse('LMS')

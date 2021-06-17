@@ -8,4 +8,4 @@ def adult_validator(birthdate):
     age = datetime.datetime.now().year - birthdate.year
 
     if age < ADULT_AGE_LIMIT:
-        raise ValidationError('Age should be greater than 18 y.o.')
+        raise ValidationError(f'Age should be greater than {ADULT_AGE_LIMIT} y.o.')
