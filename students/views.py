@@ -1,11 +1,9 @@
-from django.http import HttpResponse
+from django.urls import reverse
 from django.shortcuts import render  # noqa
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
 
 from students.forms import StudentCreateForm, StudentUpdateForm
 from students.models import Student
-from students.utils import format_records
 
 
 def hello(request):
@@ -65,13 +63,16 @@ def get_students(request, args):
        </form>
     """
 
-    records = format_records(students)
-    response = html_form + records
+    return render(
+        request=request,
+        template_name='students/list.html',
+        context={
+            'students': students
+        }
+    )
 
-    return HttpResponse(response)
 
-
-@csrf_exempt
+# @csrf_exempt
 def create_student(request):
 
     if request.method == 'GET':
@@ -84,21 +85,18 @@ def create_student(request):
 
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/students/')
+            return HttpResponseRedirect(reverse('students_list'))
 
-    html_form = f"""
-    <form method="post">
-      {form.as_p()}
-      <input type="submit" value="Create">
-    </form>
-    """
-
-    response = html_form
-
-    return HttpResponse(response)
+    return render(
+        request=request,
+        template_name='students/create.html',
+        context={
+            'form': form
+        }
+    )
 
 
-@csrf_exempt
+# @csrf_exempt
 def update_student(request, id):
 
     student = Student.objects.get(id=id)
@@ -113,15 +111,12 @@ def update_student(request, id):
 
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/students/')
+            return HttpResponseRedirect(reverse('students_list'))
 
-    html_form = f"""
-    <form method="post">
-      {form.as_p()}
-      <input type="submit" value="Save">
-    </form>
-    """
-
-    response = html_form
-
-    return HttpResponse(response)
+    return render(
+        request=request,
+        template_name='students/update.html',
+        context={
+            'form': form
+        }
+    )
